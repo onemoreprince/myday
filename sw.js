@@ -1,4 +1,4 @@
-const CACHE_NAME = 'myday-v3.4';
+const CACHE_NAME = 'myday-v3.5';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
