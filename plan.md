@@ -10,92 +10,202 @@
   - Layout components (header, footer, cards)
   - Form elements and buttons
   - Utility classes
+  - Habit card styles with accent colors
+  - All input types (checkbox, counter, timer, stars, journal)
+  - Responsive design
+  - Reduced motion support
   
 - **css/theme.css**:
-  - Light theme color palette
-  - Dark theme color palette (improved contrast)
+  - Modern Light theme (Slate & Vibrant Pastels - Tailwind-based)
+  - Dark theme (Deep Navy & Neon Glow)
   - Theme transition animations
   - Color-specific component overrides
+  - SVG gradient overrides for dark mode
 
 - **css/modals.css**:
   - Modal base styles and animations
-  - Setup modal styles
-  - Reports modal styles
+  - Setup modal with drag-and-drop list
+  - Archived habits section
+  - Reports modal with three-tab view
+  - Calendar grid styles
+  - Weekly chart styles
+  - Custom date range report
+  - Habit completion stats
   - Timer fullscreen overlay styles
-  - Date picker modal styles
+  - Hidden date picker positioning
 
 ### JavaScript Files
 - **js/app.js**:
-  - State management (currentDate, config, data)
+  - State management (currentDate, undoStack, deferredPrompt)
   - LocalStorage helpers (getStorage, setStorage)
-  - PWA installation handling
+  - PWA installation handling with deferred prompt
   - Service Worker registration
-  - Dark mode toggle
-  - Notification system
-  - Toast notifications
-  - Confetti effects
-  - Modal management
-  - Date navigation
-  - App initialization
+  - Dark mode toggle with system preference detection
+  - Notification system with time-based reminders
+  - Toast notifications with undo support
+  - Multi-burst confetti effects with shapes (rect, circle, triangle, star)
+  - Modal management (open/close with animations)
+  - Date navigation (prev/next day)
+  - Native date picker integration
+  - Haptic feedback system
+  - Undo stack management
+  - App initialization with URL action handling
 
 - **js/habits.js**:
-  - Habit rendering (renderDay)
-  - Score calculation
-  - Checkbox toggle
-  - Counter increment/decrement
-  - Star rating
-  - Journal text saving
+  - Habit rendering (renderDay) with completion stats
+  - Score calculation per habit type
+  - Completion calculation for date periods
+  - Checkbox toggle with animations
+  - Counter increment/decrement with progress bar
+  - Star rating with animations
+  - Journal text saving with character count
   - Timer controls (start, pause, reset, add time)
-  - Timer fullscreen mode
-  - Habit CRUD operations
+  - Timer fullscreen mode with circular progress ring
+  - Accent color system (6 colors: mint, pink, lavender, peach, blue, yellow)
+  - Score board with animated ring and messages
+  - Habit CRUD operations (create, edit, archive, restore, delete)
   - Drag-and-drop reordering
+  - Setup list rendering with archived section
 
 - **js/reports.js**:
-  - Report view rendering
-  - Calendar grid (current month view)
-  - Weekly summary (last 7 days)
+  - Three-tab report view (Month, Week, Custom)
+  - Current month calendar grid with activity levels
+  - Month navigation (prev/next)
+  - Weekly bar chart (last 7 days)
+  - Weekly stats (total, average, best day)
   - Custom date range reports
-  - Completion statistics
-  - Data export (JSON backup)
+  - Period completion statistics
+  - Per-habit completion bars
+  - Data export (JSON backup with metadata)
   - Data import (restore from backup)
-  - Streak calculations
+  - Lifetime points tracking
 
-## Key Features V2
+### PWA Files
+- **manifest.json**:
+  - App identity and metadata
+  - Theme colors and display mode
+  - Icons (192px, 512px) with maskable purpose
+  - Screenshots for install prompt
+  - App shortcuts (Add Habit, View Reports)
+  - Share target configuration
+  - Categories (lifestyle, productivity, health)
 
-### Timer Module Improvements
-- Fullscreen timer mode with large circular progress ring
-- Play/pause controls prominently displayed
-- Habit name shown in fullscreen view
-- Minimize button to return to normal view
-- Visual progress ring animation
+- **sw.js**:
+  - Static asset caching (Cache First strategy)
+  - HTML navigation (Network First with fallback)
+  - Cache versioning and cleanup
+  - Push notification handling
+  - Notification click actions
 
-### Report View Improvements
-- Three tabs: Current Month, Last 7 Days, Custom
-- Current Month shows calendar grid for the actual month
-- Custom range with date pickers for start/end dates
-- Completion count format: "X/Y completed" instead of streaks
+## Implemented Features
 
-### Dark Theme Improvements
-- Deeper, richer dark backgrounds
-- Better contrast ratios for accessibility
-- Softer accent colors that don't strain eyes
-- Improved text readability
+### Core Functionality
+- ✅ Daily habit tracking with 5 input types
+- ✅ Points-based scoring system
+- ✅ Daily score ring with animated progress
+- ✅ Motivational messages based on completion
+- ✅ Date navigation (previous/next day)
+- ✅ Native date picker for jumping to any date
+- ✅ Undo functionality for recent actions
 
-### Code Organization
-- Modular JavaScript with clear separation of concerns
-- CSS split by function for easier maintenance
-- Consistent naming conventions
-- Well-documented functions
+### Habit Types
+1. **Checkbox**: Simple complete/incomplete toggle with checkmark animation
+2. **Counter**: Increment/decrement with target goal and progress bar
+3. **Timer**: Time tracking with minutes target, play/pause/reset/+1m controls
+4. **Stars**: 5-star rating system with pop animation
+5. **Text**: Journal/notes entry with character count
+
+### Timer Module
+- ✅ Fullscreen timer mode with large circular progress ring
+- ✅ Play/pause controls prominently displayed
+- ✅ Habit name and icon shown in fullscreen
+- ✅ Reset and +1 minute buttons
+- ✅ Minimize button to return to normal view
+- ✅ Visual progress ring animation
+- ✅ Auto-save every 10 seconds while running
+- ✅ Celebration on target completion
+
+### Reports & Analytics
+- ✅ Three tabs: Current Month, Last 7 Days, Custom Range
+- ✅ Current Month calendar grid with 4 activity levels
+- ✅ Month navigation (prev/next month)
+- ✅ Weekly bar chart visualization
+- ✅ Weekly stats (total points, daily average, best day)
+- ✅ Custom date range picker
+- ✅ Per-habit completion percentage bars
+- ✅ Lifetime points counter
+- ✅ Period completion counter (X/Y format)
+
+### Habit Management
+- ✅ Add new habits with customization
+- ✅ Edit existing habits
+- ✅ Archive habits (hide without deleting data)
+- ✅ Restore archived habits
+- ✅ Delete habits (with confirmation)
+- ✅ Drag-and-drop reordering
+- ✅ 6 accent colors (mint, pink, lavender, peach, blue, yellow)
+- ✅ Custom emoji icons
+- ✅ Configurable point values
+- ✅ Target values for counter/timer types
+
+### Theming
+- ✅ Light theme (Modern Slate & Vibrant Pastels)
+- ✅ Dark theme (Deep Navy & Neon Glow)
+- ✅ System preference detection
+- ✅ Smooth theme transitions
+- ✅ Proper contrast ratios for accessibility
+
+### PWA Features
+- ✅ Installable as standalone app
+- ✅ Custom install prompt
+- ✅ Offline support via Service Worker
+- ✅ Push notification support
+- ✅ App shortcuts
+- ✅ Share target capability
+- ✅ Responsive design (mobile-first)
+
+### UX Enhancements
+- ✅ Haptic feedback (vibration patterns)
+- ✅ Toast notifications with undo
+- ✅ Multi-burst confetti celebration
+- ✅ Smooth animations throughout
+- ✅ Reduced motion support
+- ✅ Safe area insets for notched devices
+- ✅ Backdrop blur on footer
+
+### Data Management
+- ✅ LocalStorage persistence
+- ✅ JSON backup export with metadata
+- ✅ Backup import/restore
+- ✅ Data versioning in exports
 
 ## Data Storage Keys
 - `myday_config`: Array of habit definitions
 - `myday_data`: Object with date keys containing habit values
-- `myday_settings`: User preferences (dark mode, notifications)
-- `myday_onboarded`: Boolean for first-run state
+- `myday_settings`: User preferences (darkMode, notifications, reminderTime, installDismissed)
 
-## Habit Types
-1. **Checkbox**: Simple complete/incomplete toggle
-2. **Counter**: Increment/decrement with target goal
-3. **Timer**: Time tracking with minutes target
-4. **Stars**: 5-star rating system
-5. **Text**: Journal/notes entry
+## Habit Object Structure
+```javascript
+{
+  id: 'h_timestamp',
+  title: 'Habit Name',
+  icon: '🎯',
+  type: 'checkbox|counter|timer|stars|text',
+  score: 10,
+  target: 8, // for counter/timer only
+  accent: 'mint|pink|lavender|peach|blue|yellow',
+  active: true|false
+}
+```
+
+## Future Enhancements (Ideas)
+- [ ] Streak tracking and display
+- [ ] Weekly/monthly goals
+- [ ] Habit categories/groups
+- [ ] Cloud sync option
+- [ ] Habit templates
+- [ ] Statistics trends over time
+- [ ] Habit notes/comments per day
+- [ ] Reminder per habit (not just global)
+- [ ] Widget support
+- [ ] Data visualization improvements

@@ -1,5 +1,5 @@
-const CACHE_NAME = 'myday-v3.6'; // Bump version to force update
-const BASE_PATH = '/myday/'; // Your GitHub Pages subdirectory
+const CACHE_NAME = 'myday-v3.7'; // Bump version to force update
+const BASE_PATH = '/myday/'; //  GitHub Pages subdirectory
 
 const STATIC_ASSETS = [
     BASE_PATH,
