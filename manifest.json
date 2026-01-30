@@ -3,7 +3,7 @@
     "name": "MyDay - Daily Habit Tracker",
     "short_name": "MyDay",
     "description": "Your private, peaceful space to build better habits.",
-    "start_url": "/",
+    "start_url": "/myday/",
     "display": "standalone",
     "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
     "background_color": "#0D0D14",
