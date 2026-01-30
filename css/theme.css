@@ -1,0 +1,239 @@
+/* ==========================================
+   THEME.CSS - Modern Light & Dark Themes
+   ========================================== */
+
+/* === LIGHT THEME (Modern Slate & Vibrant Pastels) === */
+:root {
+    /* Background Colors - Cleaner, cooler whites */
+    --bg-cream: #f8fafc;
+    --bg-card: #ffffff;
+
+    /* Text Colors - High contrast slate */
+    --text-dark: #0f172a;
+    --text-medium: #475569;
+    --text-light: #94a3b8;
+
+    /* Border & Dividers */
+    --border-light: #e2e8f0;
+
+    /* Palette - Fresher, cleaner pastels with punchy accents */
+    --p-mint: #ccfbf1;        /* Tailwind Teal 100 */
+    --p-mint-dark: #0d9488;   /* Tailwind Teal 600 */
+    
+    --p-pink: #ffe4e6;        /* Tailwind Rose 100 */
+    --p-pink-dark: #e11d48;   /* Tailwind Rose 600 */
+    
+    --p-lavender: #f3e8ff;    /* Tailwind Purple 100 */
+    --p-lavender-dark: #7c3aed; /* Tailwind Purple 600 */
+    
+    --p-peach: #ffedd5;       /* Tailwind Orange 100 */
+    --p-peach-dark: #ea580c;  /* Tailwind Orange 600 */
+    
+    --p-blue: #e0f2fe;        /* Tailwind Sky 100 */
+    --p-blue-dark: #0284c7;   /* Tailwind Sky 600 */
+    
+    --p-yellow: #fef9c3;      /* Tailwind Yellow 100 */
+    --p-yellow-dark: #ca8a04; /* Tailwind Yellow 600 */
+
+    /* Shadows - Softer, more diffuse for modern feel */
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+
+    /* Accent Colors - Primary Brand (Teal based) */
+    --accent-primary: #14b8a6;
+    --accent-primary-hover: #0f766e;
+
+    /* Component Specific */
+    --score-message-text: #9a3412; /* Deep Orange for Peach bg */
+    --badge-earned-bg: #ccfbf1;
+    --badge-earned-text: #0f766e;
+
+    /* Inputs */
+    --input-bg: #f1f5f9;
+    --input-hover-bg: #e2e8f0;
+    --checkbox-border: #cbd5e1;
+
+    /* Counter */
+    --counter-plus-bg: #ccfbf1;
+    --counter-plus-text: #0f766e;
+    --counter-plus-hover-bg: #99f6e4;
+
+    /* Timer */
+    --timer-play-bg: #ccfbf1;
+    --timer-play-text: #0f766e;
+    --timer-play-hover-bg: #99f6e4;
+    --timer-pause-bg: #ffedd5;
+    --timer-pause-text: #c2410c;
+    --timer-pause-hover-bg: #fed7aa;
+
+    /* Progress Gradients */
+    --progress-fill-gradient: linear-gradient(90deg, #5eead4, #14b8a6);
+    --timer-progress-gradient: linear-gradient(90deg, #d8b4fe, #a855f7);
+
+    /* Footer */
+    --footer-bg: rgba(255, 255, 255, 0.9);
+
+    /* Toast */
+    --toast-bg: #1e293b;
+    --toast-text: #ffffff;
+    --toast-undo-bg: rgba(255, 255, 255, 0.2);
+    --toast-undo-hover-bg: rgba(255, 255, 255, 0.3);
+
+    /* Timer Fullscreen */
+    --timer-fs-bg: #f8fafc;
+    --timer-fs-ring-bg: #e2e8f0;
+    --timer-fs-ring-fill: #14b8a6;
+}
+
+/* === DARK THEME (Deep Navy & Neon Glow) === */
+[data-theme="dark"] {
+    /* Background Colors - Deep Slate/Navy */
+    --bg-cream: #020617; /* Slate 950 */
+    --bg-card: #0f172a;  /* Slate 900 */
+
+    /* Text Colors - Soft whites */
+    --text-dark: #f1f5f9;
+    --text-medium: #94a3b8;
+    --text-light: #64748b;
+
+    /* Border & Dividers */
+    --border-light: #1e293b;
+
+    /* Palette - Glowing Neon-Pastels against dark bg */
+    /* Light variable = Muted background for badges */
+    /* Dark variable = Bright text/icon color */
+    
+    --p-mint: #115e59;        /* Teal 800 */
+    --p-mint-dark: #5eead4;   /* Teal 300 (Glow) */
+    
+    --p-pink: #881337;        /* Rose 900 */
+    --p-pink-dark: #fb7185;   /* Rose 400 (Glow) */
+    
+    --p-lavender: #581c87;    /* Purple 900 */
+    --p-lavender-dark: #c084fc; /* Purple 400 (Glow) */
+    
+    --p-peach: #7c2d12;       /* Orange 900 */
+    --p-peach-dark: #fb923c;  /* Orange 400 (Glow) */
+    
+    --p-blue: #0c4a6e;        /* Sky 900 */
+    --p-blue-dark: #38bdf8;   /* Sky 400 (Glow) */
+    
+    --p-yellow: #713f12;      /* Yellow 900 */
+    --p-yellow-dark: #facc15; /* Yellow 400 (Glow) */
+
+    /* Shadows - Deep and ambient */
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+
+    /* Accent Colors */
+    --accent-primary: #2dd4bf; /* Teal 400 */
+    --accent-primary-hover: #5eead4;
+
+    /* Component Specific */
+    --score-message-text: #ffedd5;
+    --badge-earned-bg: #115e59;
+    --badge-earned-text: #5eead4;
+
+    /* Inputs */
+    --input-bg: #1e293b;
+    --input-hover-bg: #334155;
+    --checkbox-border: #475569;
+
+    /* Counter */
+    --counter-plus-bg: #115e59;
+    --counter-plus-text: #5eead4;
+    --counter-plus-hover-bg: #134e4a;
+
+    /* Timer */
+    --timer-play-bg: #115e59;
+    --timer-play-text: #5eead4;
+    --timer-play-hover-bg: #134e4a;
+    --timer-pause-bg: #7c2d12;
+    --timer-pause-text: #fdba74;
+    --timer-pause-hover-bg: #9a3412;
+
+    /* Progress Gradients */
+    --progress-fill-gradient: linear-gradient(90deg, #2dd4bf, #14b8a6);
+    --timer-progress-gradient: linear-gradient(90deg, #c084fc, #a855f7);
+
+    /* Footer */
+    --footer-bg: rgba(15, 23, 42, 0.9);
+
+    /* Toast */
+    --toast-bg: #f8fafc;
+    --toast-text: #020617;
+    --toast-undo-bg: rgba(0, 0, 0, 0.1);
+    --toast-undo-hover-bg: rgba(0, 0, 0, 0.2);
+
+    /* Timer Fullscreen */
+    --timer-fs-bg: #020617;
+    --timer-fs-ring-bg: #1e293b;
+    --timer-fs-ring-fill: #2dd4bf;
+}
+
+/* === DARK THEME SPECIFIC OVERRIDES === */
+[data-theme="dark"] .ring-fill {
+    stroke: var(--accent-primary);
+}
+
+[data-theme="dark"] .checkbox-wrapper.checked {
+    background: var(--p-pink-dark);
+}
+
+[data-theme="dark"] .checkbox-wrapper.checked .custom-check svg {
+    color: #020617; /* Dark text on bright check background */
+}
+
+[data-theme="dark"] .checkbox-wrapper.checked .check-text {
+    color: rgba(2, 6, 23, 0.8);
+}
+
+[data-theme="dark"] .score-message {
+    background: var(--p-peach);
+    color: var(--score-message-text);
+}
+
+[data-theme="dark"] .stat-box.pastel-blue {
+    background: linear-gradient(135deg, #0c4a6e, #0284c7);
+}
+
+[data-theme="dark"] .stat-box.pastel-pink {
+    background: linear-gradient(135deg, #881337, #e11d48);
+}
+
+[data-theme="dark"] .cal-day.level-1 {
+    background: #134e4a;
+    color: #5eead4;
+}
+
+[data-theme="dark"] .cal-day.level-2 {
+    background: #115e59;
+    color: #99f6e4;
+}
+
+[data-theme="dark"] .cal-day.level-3 {
+    background: #0f766e;
+    color: #f0fdfa;
+}
+
+[data-theme="dark"] .cal-day.level-4 {
+    background: var(--p-pink-dark);
+    color: #020617;
+}
+
+[data-theme="dark"] .bar-fill {
+    background: linear-gradient(to top, #115e59, #2dd4bf);
+}
+
+[data-theme="dark"] .timer-fs-ring-fill {
+    stroke: var(--timer-fs-ring-fill);
+}
+
+/* SVG Gradient for dark mode */
+[data-theme="dark"] #ringGradient stop:first-child {
+    stop-color: #2dd4bf;
+}
+
+[data-theme="dark"] #ringGradient stop:last-child {
+    stop-color: #14b8a6;
+}

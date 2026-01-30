@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyDay | Daily Habits Tracker</title>
+<meta name="theme-color" content="#0D0D14">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MyDay">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">    <meta name="description" content="MyDay - Your private, peaceful space to build better habits.">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+        <div class="install-content">
+            <span class="install-icon">🌸</span>
+            <div class="install-text">
+                <strong>Add MyDay to Home Screen</strong>
+                <span>Track habits offline, anytime!</span>
+            </div>
+            <button class="install-btn" onclick="App.installApp()">Install</button>
+            <button class="install-close" onclick="App.dismissInstall()" aria-label="Close">×</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage">✨ Saved!</span>
+        <button id="toastUndo" class="toast-undo" style="display:none;">Undo</button>
+    </div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Timer Fullscreen Overlay -->
+    <div id="timerFullscreen" class="timer-fullscreen">
+        <button class="timer-fs-close" onclick="Habits.closeTimerFullscreen()" aria-label="Minimize">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="4 14 10 14 10 20"></polyline>
+                <polyline points="20 10 14 10 14 4"></polyline>
+                <line x1="14" y1="10" x2="21" y2="3"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+        </button>
+        <div class="timer-fs-content">
+            <div class="timer-fs-habit-name" id="timerFsHabitName">Meditation</div>
+            <div class="timer-fs-ring-container">
+                <svg class="timer-fs-ring" viewBox="0 0 200 200">
+                    <circle class="timer-fs-ring-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="timer-fs-ring-fill" id="timerFsRingFill" cx="100" cy="100" r="90"></circle>
+                </svg>
+                <div class="timer-fs-time">
+                    <span id="timerFsValue">0:00</span>
+                    <span class="timer-fs-target" id="timerFsTarget">/ 10 min</span>
+                </div>
+            </div>
+            <div class="timer-fs-controls">
+                <button class="timer-fs-btn reset" onclick="Habits.resetTimerFromFullscreen()" title="Reset">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                        <path d="M3 3v5h5" />
+                    </svg>
+                </button>
+                <button class="timer-fs-btn play-pause" id="timerFsPlayPause"
+                    onclick="Habits.toggleTimerFromFullscreen()">
+                    <svg class="play-icon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <svg class="pause-icon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"
+                        style="display:none;">
+                        <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                        <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+                    </svg>
+                </button>
+                <button class="timer-fs-btn add" onclick="Habits.addTimeFromFullscreen(1)" title="Add 1 min">
+                    +1m
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Main Header -->
+    <header class="date-header">
+        <button class="nav-btn" onclick="App.changeDate(-1)" aria-label="Previous day">◀</button>
+        <div class="date-display" onclick="App.openDatePicker()">
+            <h1 id="dayName">Today</h1>
+            <p id="fullDate">...</p>
+        </div>
+        <button class="nav-btn" onclick="App.changeDate(1)" aria-label="Next day">▶</button>
+    </header>
+    <!-- Hidden date picker input -->
+    <input type="date" id="jumpToDateInput" onchange="App.jumpToSelectedDate()" class="hidden-date-picker">
+
+
+    <!-- Score Card -->
+    <div class="score-card">
+        <div class="score-ring-container">
+            <svg class="score-ring" viewBox="0 0 100 100">
+                <defs>
+                    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#7bd4cc" />
+                        <stop offset="100%" style="stop-color:#b2f7ef" />
+                    </linearGradient>
+                </defs>
+                <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                <circle id="scoreProgress" class="ring-fill" cx="50" cy="50" r="45" pathLength="100"></circle>
+            </svg>
+            <div class="score-text">
+                <span id="dailyScore">0</span>
+                <span class="score-label">Points</span>
+            </div>
+        </div>
+        <div class="score-message clickable" id="scoreMessage" onclick="App.triggerConfetti()"
+            title="Click for confetti!">Let's start the day! 🌱</div>
+        <div class="score-subtext" id="scoreSubtext"></div>
+    </div>
+
+    <!-- Habits List -->
+    <div id="habitList" class="habit-container"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state" style="display:none;">
+        <div class="empty-icon">📝</div>
+        <h3>No habits yet</h3>
+        <p>Create your first habit to start tracking!</p>
+        <button class="btn-primary" onclick="App.openModal('setupModal')">Add Habit</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <button onclick="App.openModal('reportsModal')" class="footer-btn" aria-label="View reports">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10M12 20V4M6 20v-6" />
+            </svg>
+            <span>Reports</span>
+        </button>
+        <button onclick="App.toggleDarkMode()" class="footer-btn" aria-label="Toggle dark mode" id="darkModeBtn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+            <span>Theme</span>
+        </button>
+        <button onclick="App.openModal('setupModal')" class="footer-btn" aria-label="Manage habits">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path
+                    d="M12 1v6m0 6v10M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m6 0h10M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24" />
+            </svg>
+            <span>Setup</span>
+        </button>
+    </footer>
+
+    <!-- Setup Modal -->
+    <div id="setupModal" class="modal" role="dialog" aria-labelledby="setupTitle">
+        <div class="modal-backdrop" onclick="App.closeModal('setupModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="setupTitle">Manage Habits</h2>
+                <button class="close-btn" onclick="App.closeModal('setupModal')" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <div id="setupList" class="setup-list"></div>
+
+            <!-- Archived Section -->
+            <div id="archivedSection" class="archived-section" style="display:none;">
+                <h3 class="archived-header" onclick="Habits.toggleArchivedList()">
+                    <span>📦 Archived Habits</span>
+                    <svg id="archivedChevron" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </h3>
+                <div id="archivedList" class="archived-list" style="display:none;"></div>
+            </div>
+
+            <div class="add-habit-form">
+                <h3 id="addHabitFormTitle">Add New Habit</h3>
+                <div class="form-group">
+                    <label for="newHabitTitle">Habit Name</label>
+                    <input type="text" id="newHabitTitle" placeholder="e.g., Read 10 Pages">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="newHabitType">Type</label>
+                        <select id="newHabitType" onchange="Habits.updateTypeOptions()">
+                            <option value="checkbox">☑️ Checkbox</option>
+                            <option value="counter">🔢 Counter</option>
+                            <option value="timer">⏱️ Timer</option>
+                            <option value="stars">⭐ 5-Star Rating</option>
+                            <option value="text">📝 Journal</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="newHabitScore">Points</label>
+                        <input type="number" id="newHabitScore" value="10" min="0">
+                    </div>
+                </div>
+
+                <!-- Counter/Timer Target -->
+                <div id="targetGroup" class="form-group" style="display:none;">
+                    <label for="newHabitTarget" id="targetLabel">Target</label>
+                    <div class="target-input-wrapper">
+                        <input type="number" id="newHabitTarget" value="8" min="1">
+                        <span id="targetUnit" class="target-unit">times</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label>Icon</label>
+                        <div class="emoji-picker">
+                            <input type="text" id="newHabitIcon" value="✨" maxlength="2" class="emoji-input">
+                            <div class="emoji-suggestions">
+                                <span onclick="Habits.selectEmoji('💧')">💧</span>
+                                <span onclick="Habits.selectEmoji('📚')">📚</span>
+                                <span onclick="Habits.selectEmoji('🏃')">🏃</span>
+                                <span onclick="Habits.selectEmoji('🧘')">🧘</span>
+                                <span onclick="Habits.selectEmoji('💊')">💊</span>
+                                <span onclick="Habits.selectEmoji('🥗')">🥗</span>
+                                <span onclick="Habits.selectEmoji('😴')">😴</span>
+                                <span onclick="Habits.selectEmoji('✏️')">✏️</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Accent Color</label>
+                        <div class="color-swatches">
+                            <input type="radio" name="accentColor" id="accent-mint" value="mint" checked hidden>
+                            <label for="accent-mint" class="color-swatch" data-color="mint" title="Mint">
+                                <span class="swatch-circle swatch-mint"></span>
+                            </label>
+
+                            <input type="radio" name="accentColor" id="accent-pink" value="pink" hidden>
+                            <label for="accent-pink" class="color-swatch" data-color="pink" title="Pink">
+                                <span class="swatch-circle swatch-pink"></span>
+                            </label>
+
+                            <input type="radio" name="accentColor" id="accent-lavender" value="lavender" hidden>
+                            <label for="accent-lavender" class="color-swatch" data-color="lavender" title="Lavender">
+                                <span class="swatch-circle swatch-lavender"></span>
+                            </label>
+
+                            <input type="radio" name="accentColor" id="accent-peach" value="peach" hidden>
+                            <label for="accent-peach" class="color-swatch" data-color="peach" title="Peach">
+                                <span class="swatch-circle swatch-peach"></span>
+                            </label>
+
+                            <input type="radio" name="accentColor" id="accent-blue" value="blue" hidden>
+                            <label for="accent-blue" class="color-swatch" data-color="blue" title="Blue">
+                                <span class="swatch-circle swatch-blue"></span>
+                            </label>
+
+                            <input type="radio" name="accentColor" id="accent-yellow" value="yellow" hidden>
+                            <label for="accent-yellow" class="color-swatch" data-color="yellow" title="Yellow">
+                                <span class="swatch-circle swatch-yellow"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="addHabitBtn" onclick="Habits.addNewHabit()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span id="addHabitBtnText">Create Habit</span>
+                </button>
+            </div>
+
+            <div class="modal-section">
+                <h3>Notifications</h3>
+                <div class="toggle-row">
+                    <span>Daily Reminder</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notificationToggle" onchange="App.toggleNotifications()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div id="notificationTime" class="notification-time" style="display:none;">
+                    <label for="reminderTime">Remind me at:</label>
+                    <input type="time" id="reminderTime" value="20:00" onchange="App.saveReminderTime()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports Modal -->
+    <div id="reportsModal" class="modal" role="dialog" aria-labelledby="reportsTitle">
+        <div class="modal-backdrop" onclick="App.closeModal('reportsModal')"></div>
+        <div class="modal-content reports-modal-content">
+            <div class="modal-header">
+                <h2 id="reportsTitle">Your Progress</h2>
+                <button class="close-btn" onclick="App.closeModal('reportsModal')" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-box pastel-blue">
+                    <div class="stat-val" id="totalPoints">0</div>
+                    <div class="stat-lbl">Lifetime Points</div>
+                </div>
+                <div class="stat-box pastel-pink">
+                    <div class="stat-val" id="periodCompletion">0/0</div>
+                    <div class="stat-lbl">Completed</div>
+                </div>
+            </div>
+
+            <!-- Three Tab View Toggle -->
+            <div class="view-toggle three-tabs">
+                <button class="view-btn active" onclick="Reports.setReportView('month')" id="viewMonth">This
+                    Month</button>
+                <button class="view-btn" onclick="Reports.setReportView('week')" id="viewWeek">Last 7 Days</button>
+                <button class="view-btn" onclick="Reports.setReportView('custom')" id="viewCustom">Custom</button>
+            </div>
+
+            <!-- Month Report Content -->
+            <div id="monthReport">
+                <div class="report-month-header">
+                    <button class="month-nav-btn" onclick="Reports.changeMonth(-1)">◀</button>
+                    <h3 id="currentMonthTitle">January 2026</h3>
+                    <button class="month-nav-btn" onclick="Reports.changeMonth(1)">▶</button>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
+
+            <!-- Weekly Report Content -->
+            <div id="weeklyReport" style="display:none;">
+                <h3>Last 7 Days Summary</h3>
+                <div id="weeklyChart" class="weekly-chart"></div>
+                <div id="weeklyStats" class="weekly-stats"></div>
+            </div>
+
+            <!-- Custom Range Report Content -->
+            <div id="customReport" style="display:none;">
+                <div class="custom-date-range">
+                    <div class="date-range-group">
+                        <label for="customStartDate">Start Date</label>
+                        <input type="date" id="customStartDate" onchange="Reports.updateCustomReport()">
+                    </div>
+                    <div class="date-range-group">
+                        <label for="customEndDate">End Date</label>
+                        <input type="date" id="customEndDate" onchange="Reports.updateCustomReport()">
+                    </div>
+                </div>
+                <div id="customReportContent" class="custom-report-content"></div>
+            </div>
+
+            <!-- Habit Completion Stats -->
+            <div class="habit-completion-stats">
+                <h3>Habit Completion</h3>
+                <div id="habitCompletionList"></div>
+            </div>
+
+            <div class="data-actions">
+                <button class="btn-secondary" onclick="Reports.exportData()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                    Export Backup
+                </button>
+                <label class="btn-secondary import-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                    </svg>
+                    Import Backup
+                    <input type="file" accept=".json" onchange="Reports.importData(event)" hidden>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/app.js"></script>
+    <script src="js/habits.js"></script>
+    <script src="js/reports.js"></script>
+</body>
+
+</html>
