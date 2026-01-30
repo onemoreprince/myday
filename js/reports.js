@@ -366,60 +366,211 @@ const Reports = (function () {
     `).join('');
     }
 
-    // === DATA EXPORT ===
-    function exportData() {
-        App.haptic('medium');
-        const data = {
-            config: App.getStorage(App.DB_KEYS.CONFIG, []),
-            history: App.getStorage(App.DB_KEYS.DATA, {}),
-            settings: App.getStorage(App.DB_KEYS.SETTINGS, {}),
-            exportDate: new Date().toISOString(),
-            appVersion: '2.0'
-        };
+// === DATA EXPORT (CSV) ===
+function exportData() {
+    App.haptic('medium');
+    const config = App.getStorage(App.DB_KEYS.CONFIG, []);
+    const data = App.getStorage(App.DB_KEYS.DATA, {});
+    const settings = App.getStorage(App.DB_KEYS.SETTINGS, {});
 
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `myday_backup_${App.getDateStr(new Date())}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
+    // Create CSV content
+    let csvContent = '';
 
-        App.showToast('Backup downloaded! 💾');
-    }
+    // Section 1: Metadata
+    csvContent += '##MYDAY_BACKUP_V2##\n';
+    csvContent += '##EXPORT_DATE##,' + new Date().toISOString() + '\n';
+    csvContent += '\n';
 
-    // === DATA IMPORT ===
-    function importData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+    // Section 2: Settings
+    csvContent += '##SETTINGS##\n';
+    csvContent += 'key,value\n';
+    Object.keys(settings).forEach(key => {
+        const value = String(settings[key]).replace(/,/g, '{{COMMA}}').replace(/\n/g, '{{NEWLINE}}');
+        csvContent += `${key},${value}\n`;
+    });
+    csvContent += '\n';
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
+    // Section 3: Habits Config
+    csvContent += '##HABITS##\n';
+    csvContent += 'id,title,icon,type,score,target,accent,active\n';
+    config.forEach(habit => {
+        const title = habit.title.replace(/,/g, '{{COMMA}}').replace(/\n/g, '{{NEWLINE}}');
+        const icon = habit.icon.replace(/,/g, '{{COMMA}}');
+        csvContent += `${habit.id},${title},${icon},${habit.type},${habit.score || 10},${habit.target || ''},${habit.accent || 'mint'},${habit.active !== false}\n`;
+    });
+    csvContent += '\n';
 
-                if (data.config) {
-                    App.setStorage(App.DB_KEYS.CONFIG, data.config);
-                }
-                if (data.history) {
-                    App.setStorage(App.DB_KEYS.DATA, data.history);
-                }
-                if (data.settings) {
-                    App.setStorage(App.DB_KEYS.SETTINGS, data.settings);
-                }
-
-                Habits.renderDay();
-                renderReports();
-                App.haptic('success');
-                App.showToast('Data imported successfully! 🎉');
-            } catch (err) {
-                App.haptic('error');
-                App.showToast('Invalid backup file');
+    // Section 4: History Data
+    csvContent += '##HISTORY##\n';
+    csvContent += 'date,habitId,value\n';
+    Object.keys(data).forEach(dateStr => {
+        const dayData = data[dateStr];
+        Object.keys(dayData).forEach(habitId => {
+            let value = dayData[habitId];
+            // Handle different value types
+            if (typeof value === 'string') {
+                value = value.replace(/,/g, '{{COMMA}}').replace(/\n/g, '{{NEWLINE}}').replace(/\r/g, '');
+            } else if (typeof value === 'boolean') {
+                value = value ? 'true' : 'false';
             }
-        };
-        reader.readAsText(file);
-        event.target.value = '';
+            csvContent += `${dateStr},${habitId},${value}\n`;
+        });
+    });
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', url);
+    downloadAnchor.setAttribute('download', `myday_backup_${App.getDateStr(new Date())}.csv`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    URL.revokeObjectURL(url);
+
+    App.showToast('Backup downloaded! 💾');
+}
+
+// === DATA IMPORT (CSV) ===
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const content = e.target.result;
+            const lines = content.split('\n');
+
+            // Verify it's a valid backup
+            if (!lines[0].includes('##MYDAY_BACKUP')) {
+                throw new Error('Invalid backup file');
+            }
+
+            let currentSection = '';
+            const settings = {};
+            const config = [];
+            const data = {};
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                // Skip empty lines and header row detection
+                if (!line) continue;
+
+                // Detect section headers
+                if (line.startsWith('##SETTINGS##')) {
+                    currentSection = 'settings';
+                    i++; // Skip CSV header row
+                    continue;
+                } else if (line.startsWith('##HABITS##')) {
+                    currentSection = 'habits';
+                    i++; // Skip CSV header row
+                    continue;
+                } else if (line.startsWith('##HISTORY##')) {
+                    currentSection = 'history';
+                    i++; // Skip CSV header row
+                    continue;
+                } else if (line.startsWith('##')) {
+                    continue; // Skip other metadata lines
+                }
+
+                // Parse based on current section
+                if (currentSection === 'settings') {
+                    const [key, ...valueParts] = line.split(',');
+                    if (key) {
+                        let value = valueParts.join(',')
+                            .replace(/\{\{COMMA\}\}/g, ',')
+                            .replace(/\{\{NEWLINE\}\}/g, '\n');
+                        // Convert string booleans
+                        if (value === 'true') value = true;
+                        else if (value === 'false') value = false;
+                        settings[key] = value;
+                    }
+                } else if (currentSection === 'habits') {
+                    const parts = parseCSVLine(line);
+                    if (parts.length >= 7) {
+                        const habit = {
+                            id: parts[0],
+                            title: parts[1].replace(/\{\{COMMA\}\}/g, ',').replace(/\{\{NEWLINE\}\}/g, '\n'),
+                            icon: parts[2].replace(/\{\{COMMA\}\}/g, ','),
+                            type: parts[3],
+                            score: parseInt(parts[4]) || 10,
+                            accent: parts[6] || 'mint',
+                            active: parts[7] !== 'false'
+                        };
+                        if (parts[5]) {
+                            habit.target = parseInt(parts[5]);
+                        }
+                        config.push(habit);
+                    }
+                } else if (currentSection === 'history') {
+                    const parts = parseCSVLine(line);
+                    if (parts.length >= 3) {
+                        const dateStr = parts[0];
+                        const habitId = parts[1];
+                        let value = parts.slice(2).join(',')
+                            .replace(/\{\{COMMA\}\}/g, ',')
+                            .replace(/\{\{NEWLINE\}\}/g, '\n');
+
+                        // Convert value types
+                        if (value === 'true') value = true;
+                        else if (value === 'false') value = false;
+                        else if (!isNaN(value) && value !== '') value = parseFloat(value);
+
+                        if (!data[dateStr]) data[dateStr] = {};
+                        data[dateStr][habitId] = value;
+                    }
+                }
+            }
+
+            // Save imported data
+            if (config.length > 0) {
+                App.setStorage(App.DB_KEYS.CONFIG, config);
+            }
+            if (Object.keys(data).length > 0) {
+                App.setStorage(App.DB_KEYS.DATA, data);
+            }
+            if (Object.keys(settings).length > 0) {
+                App.setStorage(App.DB_KEYS.SETTINGS, settings);
+            }
+
+            Habits.renderDay();
+            renderReports();
+            App.haptic('success');
+            App.showToast('Data imported successfully! 🎉');
+
+        } catch (err) {
+            console.error('Import error:', err);
+            App.haptic('error');
+            App.showToast('Invalid backup file');
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// Helper function to parse CSV line (handles values with commas)
+function parseCSVLine(line) {
+    const parts = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            parts.push(current);
+            current = '';
+        } else {
+            current += char;
+        }
     }
+    parts.push(current);
+
+    return parts;
+}
 
     // === PUBLIC API ===
     return {
