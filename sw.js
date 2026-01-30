@@ -1,16 +1,18 @@
-const CACHE_NAME = 'myday-v3.5';
+const CACHE_NAME = 'myday-v3.6'; // Bump version to force update
+const BASE_PATH = '/myday/'; // Your GitHub Pages subdirectory
+
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/css/main.css',
-    '/css/theme.css',
-    '/css/modals.css',
-    '/js/app.js',
-    '/js/habits.js',
-    '/js/reports.js',
-    '/manifest.json',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png'
+    BASE_PATH,
+    BASE_PATH + 'index.html',
+    BASE_PATH + 'css/main.css',
+    BASE_PATH + 'css/theme.css',
+    BASE_PATH + 'css/modals.css',
+    BASE_PATH + 'js/app.js',
+    BASE_PATH + 'js/habits.js',
+    BASE_PATH + 'js/reports.js',
+    BASE_PATH + 'manifest.json',
+    BASE_PATH + 'icons/icon-192.png',
+    BASE_PATH + 'icons/icon-512.png'
 ];
 
 // 1. Install Event: Cache core assets immediately
@@ -45,7 +47,7 @@ self.addEventListener('fetch', (event) => {
                 .catch(() => {
                     return caches.match(event.request)
                         .then((response) => {
-                            return response || caches.match('/');
+                            return response || caches.match(BASE_PATH);
                         });
                 })
         );
@@ -77,10 +79,10 @@ self.addEventListener('push', (event) => {
     const data = event.data ? event.data.text() : "Time to check in!";
     const options = {
         body: data,
-        icon: "/icons/icon-192.png",
-        badge: "/icons/icon-96.png",
+        icon: BASE_PATH + "icons/icon-192.png",
+        badge: BASE_PATH + "icons/icon-96.png",
         vibrate: [100, 50, 100],
-        data: { url: '/' },
+        data: { url: BASE_PATH },
         actions: [
             { action: 'check-in', title: '✅ Check In' },
             { action: 'snooze', title: '💤 Snooze' }
@@ -96,18 +98,18 @@ self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     
     if (event.action === 'check-in') {
-        clients.openWindow('/?action=checkin');
+        clients.openWindow(BASE_PATH + '?action=checkin');
     } else {
         event.waitUntil(
             clients.matchAll({ type: 'window', includeUncontrolled: true })
                 .then((clientList) => {
                     for (const client of clientList) {
-                        if (client.url === '/' && 'focus' in client) {
+                        if (client.url.includes(BASE_PATH) && 'focus' in client) {
                             return client.focus();
                         }
                     }
                     if (clients.openWindow) {
-                        return clients.openWindow('/');
+                        return clients.openWindow(BASE_PATH);
                     }
                 })
         );

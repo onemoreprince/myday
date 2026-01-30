@@ -3,7 +3,8 @@
     "name": "MyDay - Daily Habit Tracker",
     "short_name": "MyDay",
     "description": "Your private, peaceful space to build better habits.",
-    "start_url": "/myday/",
+    "start_url": "./",
+    "scope": "./",
     "display": "standalone",
     "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
     "background_color": "#0D0D14",
@@ -11,13 +12,13 @@
     "orientation": "portrait",
     "icons": [
         {
-            "src": "icons/icon-192.png",
+            "src": "./icons/icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "icons/icon-512.png",
+            "src": "./icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
@@ -25,14 +26,14 @@
     ],
     "screenshots": [
         {
-            "src": "screenshots/mobile-view.png",
+            "src": "./screenshots/mobile-view.png",
             "sizes": "1080x1920",
             "type": "image/png",
             "form_factor": "narrow",
             "label": "Track your daily habits"
         },
         {
-            "src": "screenshots/desktop-view.png",
+            "src": "./screenshots/desktop-view.png",
             "sizes": "1920x1080",
             "type": "image/png",
             "form_factor": "wide",
@@ -45,10 +46,10 @@
             "name": "Add Habit",
             "short_name": "Add",
             "description": "Create a new habit to track",
-            "url": "/?action=add",
+            "url": "./?action=add",
             "icons": [
                 {
-                    "src": "icons/icon-96.png",
+                    "src": "./icons/icon-96.png",
                     "sizes": "96x96",
                     "type": "image/png"
                 }
@@ -58,10 +59,10 @@
             "name": "View Reports",
             "short_name": "Reports",
             "description": "See your progress",
-            "url": "/?action=reports",
+            "url": "./?action=reports",
             "icons": [
                 {
-                    "src": "icons/icon-96.png",
+                    "src": "./icons/icon-96.png",
                     "sizes": "96x96",
                     "type": "image/png"
                 }
@@ -69,7 +70,7 @@
         }
     ],
     "share_target": {
-        "action": "/?action=share",
+        "action": "./?action=share",
         "method": "GET",
         "enctype": "application/x-www-form-urlencoded",
         "params": {
