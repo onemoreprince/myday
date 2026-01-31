@@ -2,7 +2,7 @@
    APP.JS - Core Application Logic
    ========================================== */
 
-const App = (function() {
+const App = (function () {
     'use strict';
 
     // === CONSTANTS ===
@@ -57,7 +57,7 @@ const App = (function() {
         if (!('vibrate' in navigator) || !window.isSecureContext) {
             return;
         }
-        
+
         try {
             const patterns = {
                 light: 10,
@@ -181,34 +181,34 @@ const App = (function() {
         // Set the input to the current viewing date
         const dateInput = document.getElementById('jumpToDateInput');
         dateInput.value = getDateStr(currentDate);
-        
+
         // Trigger the native date picker directly (no modal)
         dateInput.showPicker ? dateInput.showPicker() : dateInput.focus();
     }
 
     function jumpToSelectedDate() {
-    const dateInput = document.getElementById('jumpToDateInput');
-    if (dateInput.value) {
-        haptic('medium');
-        // Parse the date string and create a new date at noon to avoid timezone issues
-        const [year, month, day] = dateInput.value.split('-').map(Number);
-        currentDate = new Date(year, month - 1, day, 12, 0, 0);
-        Habits.renderDay();
-        
-        // Show feedback
-        const today = new Date();
-        const todayStr = getDateStr(today);
-        const selectedStr = getDateStr(currentDate);
-        
-        if (selectedStr === todayStr) {
-            showToast('Jumped to today! 📅');
-        } else if (currentDate < today) {
-            showToast('Viewing past date 🕐');
-        } else {
-            showToast('Viewing future date 🔮');
+        const dateInput = document.getElementById('jumpToDateInput');
+        if (dateInput.value) {
+            haptic('medium');
+            // Parse the date string and create a new date at noon to avoid timezone issues
+            const [year, month, day] = dateInput.value.split('-').map(Number);
+            currentDate = new Date(year, month - 1, day, 12, 0, 0);
+            Habits.renderDay();
+
+            // Show feedback
+            const today = new Date();
+            const todayStr = getDateStr(today);
+            const selectedStr = getDateStr(currentDate);
+
+            if (selectedStr === todayStr) {
+                showToast('Jumped to today! 📅');
+            } else if (currentDate < today) {
+                showToast('Viewing past date 🕐');
+            } else {
+                showToast('Viewing future date 🔮');
+            }
         }
     }
-}
 
 
     // === DARK MODE ===
@@ -344,145 +344,272 @@ const App = (function() {
 
 
     // === CONFETTI ===
-function triggerConfetti() {
-    haptic('success');
+    function triggerConfetti() {
+        haptic('success');
 
-    const canvas = document.getElementById('confettiCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-    const particles = [];
-    const colors = [
-        '#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff85a2',
-        '#a855f7', '#38bdf8', '#fb923c', '#2dd4bf', '#f472b6'
-    ];
-    const shapes = ['rect', 'circle', 'triangle', 'star'];
+        const particles = [];
+        const colors = [
+            '#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff85a2',
+            '#a855f7', '#38bdf8', '#fb923c', '#2dd4bf', '#f472b6'
+        ];
+        const shapes = ['rect', 'circle', 'triangle', 'star'];
 
-    // Create particles from multiple burst points
-    const burstPoints = [
-        { x: canvas.width * 0.25, y: canvas.height * 0.6 },
-        { x: canvas.width * 0.5, y: canvas.height * 0.5 },
-        { x: canvas.width * 0.75, y: canvas.height * 0.6 }
-    ];
+        // Create particles from multiple burst points
+        const burstPoints = [
+            { x: canvas.width * 0.25, y: canvas.height * 0.6 },
+            { x: canvas.width * 0.5, y: canvas.height * 0.5 },
+            { x: canvas.width * 0.75, y: canvas.height * 0.6 }
+        ];
 
-    burstPoints.forEach(point => {
-        for (let i = 0; i < 50; i++) {
-            const angle = (Math.random() * Math.PI * 2);
-            const velocity = Math.random() * 12 + 6;
-            
-            particles.push({
-                x: point.x,
-                y: point.y,
-                vx: Math.cos(angle) * velocity * (Math.random() * 0.5 + 0.5),
-                vy: Math.sin(angle) * velocity - Math.random() * 8 - 4,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                size: Math.random() * 10 + 5,
-                shape: shapes[Math.floor(Math.random() * shapes.length)],
-                rotation: Math.random() * 360,
-                rotationSpeed: (Math.random() - 0.5) * 15,
-                gravity: 0.25 + Math.random() * 0.1,
-                drag: 0.98 + Math.random() * 0.015,
-                opacity: 1,
-                wobble: Math.random() * 10,
-                wobbleSpeed: Math.random() * 0.1 + 0.05
-            });
-        }
-    });
+        burstPoints.forEach(point => {
+            for (let i = 0; i < 50; i++) {
+                const angle = (Math.random() * Math.PI * 2);
+                const velocity = Math.random() * 12 + 6;
 
-    let frame = 0;
-    const maxFrames = 180;
-
-    function drawShape(p) {
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation * Math.PI / 180);
-        ctx.globalAlpha = p.opacity;
-        ctx.fillStyle = p.color;
-
-        switch (p.shape) {
-            case 'rect':
-                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-                break;
-            case 'circle':
-                ctx.beginPath();
-                ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-                ctx.fill();
-                break;
-            case 'triangle':
-                ctx.beginPath();
-                ctx.moveTo(0, -p.size / 2);
-                ctx.lineTo(p.size / 2, p.size / 2);
-                ctx.lineTo(-p.size / 2, p.size / 2);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'star':
-                drawStar(ctx, 0, 0, 5, p.size / 2, p.size / 4);
-                break;
-        }
-        ctx.restore();
-    }
-
-    function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
-        let rot = Math.PI / 2 * 3;
-        let x = cx;
-        let y = cy;
-        const step = Math.PI / spikes;
-
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - outerRadius);
-
-        for (let i = 0; i < spikes; i++) {
-            x = cx + Math.cos(rot) * outerRadius;
-            y = cy + Math.sin(rot) * outerRadius;
-            ctx.lineTo(x, y);
-            rot += step;
-
-            x = cx + Math.cos(rot) * innerRadius;
-            y = cy + Math.sin(rot) * innerRadius;
-            ctx.lineTo(x, y);
-            rot += step;
-        }
-
-        ctx.lineTo(cx, cy - outerRadius);
-        ctx.closePath();
-        ctx.fill();
-    }
-
-    function animate() {
-        if (frame >= maxFrames) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            return;
-        }
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach(p => {
-            // Apply physics
-            p.vy += p.gravity;
-            p.vx *= p.drag;
-            p.vy *= p.drag;
-            
-            // Add wobble effect
-            p.x += p.vx + Math.sin(frame * p.wobbleSpeed) * p.wobble * 0.1;
-            p.y += p.vy;
-            p.rotation += p.rotationSpeed;
-            
-            // Fade out towards the end
-            if (frame > maxFrames * 0.6) {
-                p.opacity = Math.max(0, 1 - (frame - maxFrames * 0.6) / (maxFrames * 0.4));
+                particles.push({
+                    x: point.x,
+                    y: point.y,
+                    vx: Math.cos(angle) * velocity * (Math.random() * 0.5 + 0.5),
+                    vy: Math.sin(angle) * velocity - Math.random() * 8 - 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 10 + 5,
+                    shape: shapes[Math.floor(Math.random() * shapes.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 15,
+                    gravity: 0.25 + Math.random() * 0.1,
+                    drag: 0.98 + Math.random() * 0.015,
+                    opacity: 1,
+                    wobble: Math.random() * 10,
+                    wobbleSpeed: Math.random() * 0.1 + 0.05
+                });
             }
-
-            drawShape(p);
         });
 
-        frame++;
-        requestAnimationFrame(animate);
+        let frame = 0;
+        const maxFrames = 180;
+
+        function drawShape(p) {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation * Math.PI / 180);
+            ctx.globalAlpha = p.opacity;
+            ctx.fillStyle = p.color;
+
+            switch (p.shape) {
+                case 'rect':
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                    break;
+                case 'circle':
+                    ctx.beginPath();
+                    ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'triangle':
+                    ctx.beginPath();
+                    ctx.moveTo(0, -p.size / 2);
+                    ctx.lineTo(p.size / 2, p.size / 2);
+                    ctx.lineTo(-p.size / 2, p.size / 2);
+                    ctx.closePath();
+                    ctx.fill();
+                    break;
+                case 'star':
+                    drawStar(ctx, 0, 0, 5, p.size / 2, p.size / 4);
+                    break;
+            }
+            ctx.restore();
+        }
+
+        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            const step = Math.PI / spikes;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function animate() {
+            if (frame >= maxFrames) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                // Apply physics
+                p.vy += p.gravity;
+                p.vx *= p.drag;
+                p.vy *= p.drag;
+
+                // Add wobble effect
+                p.x += p.vx + Math.sin(frame * p.wobbleSpeed) * p.wobble * 0.1;
+                p.y += p.vy;
+                p.rotation += p.rotationSpeed;
+
+                // Fade out towards the end
+                if (frame > maxFrames * 0.6) {
+                    p.opacity = Math.max(0, 1 - (frame - maxFrames * 0.6) / (maxFrames * 0.4));
+                }
+
+                drawShape(p);
+            });
+
+            frame++;
+            requestAnimationFrame(animate);
+        }
+
+        animate();
     }
 
-    animate();
-}
+
+    // === SHARE PROGRESS ===
+    function shareProgress() {
+        haptic('medium');
+
+        const currentDateObj = currentDate;
+        const dateStr = getDateStr(currentDateObj);
+        const config = getStorage(DB_KEYS.CONFIG, []);
+        const activeHabits = config.filter(h => h.active !== false);
+        const data = getStorage(DB_KEYS.DATA, {});
+        const daysData = data[dateStr] || {};
+
+        // Calculate scores
+        let totalScore = 0;
+        let maxScore = 0;
+        let completedCount = 0;
+        const habitDetails = [];
+
+        activeHabits.forEach(habit => {
+            const val = daysData[habit.id];
+            const habitMaxScore = parseInt(habit.score) || 0;
+            const earned = Habits.calculateHabitScore(habit, val);
+
+            maxScore += habitMaxScore;
+            totalScore += earned;
+
+            const isComplete = earned > 0;
+            if (isComplete) completedCount++;
+
+            habitDetails.push({
+                icon: habit.icon,
+                title: habit.title,
+                isComplete,
+                earned,
+                max: habitMaxScore
+            });
+        });
+
+        const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+
+        // Format date
+        const dateFormatted = currentDateObj.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        // Build WhatsApp-friendly message with formatting
+        let message = `*🌟 MyDay Progress Report*\n`;
+        message += `📅 _${dateFormatted}_\n\n`;
+
+        // Score summary with visual bar
+        const filledBlocks = Math.round(percentage / 10);
+        const emptyBlocks = 10 - filledBlocks;
+        const progressBar = '🟩'.repeat(filledBlocks) + '⬜'.repeat(emptyBlocks);
+
+        message += `${progressBar}\n`;
+        message += `*${totalScore}/${maxScore} points* (${percentage}%)\n\n`;
+
+        // Habits breakdown
+        message += `*Habits:* ${completedCount}/${activeHabits.length} completed\n`;
+        message += `━━━━━━━━━━━━━━━\n`;
+
+        habitDetails.forEach(h => {
+            const statusEmoji = h.isComplete ? '🟢' : '🔴';
+            const pointsText = h.isComplete ? `+${h.earned}` : '0';
+            message += `${statusEmoji} ${h.icon} ${h.title} _(${pointsText}/${h.max})_\n`;
+        });
+
+        message += `━━━━━━━━━━━━━━━\n\n`;
+
+        // Motivational footer based on percentage
+        if (percentage === 100) {
+            message += `🏆 *All habits completed today!*`;
+        } else if (percentage >= 80) {
+            message += `✨ *Almost a perfect day!*`;
+        } else if (percentage >= 50) {
+            message += `📊 *More than halfway there!*`;
+        } else if (percentage > 0) {
+            message += `🚀 *Day in progress...*`;
+        } else {
+            message += `📋 *Day just started*`;
+        }
+
+        // Use Web Share API if available
+        if (navigator.share) {
+            navigator.share({
+                title: 'MyDay Progress',
+                text: message
+            }).then(() => {
+                showToast('Shared successfully! 📤');
+            }).catch((err) => {
+                if (err.name !== 'AbortError') {
+                    fallbackCopyShare(message);
+                }
+            });
+        } else {
+            fallbackCopyShare(message);
+        }
+    }
+
+    function fallbackCopyShare(message) {
+        // Fallback: copy to clipboard
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast('Copied to clipboard! 📋');
+            }).catch(() => {
+                showToast('Could not share');
+            });
+        } else {
+            // Final fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = message;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Copied to clipboard! 📋');
+            } catch (err) {
+                showToast('Could not share');
+            }
+            document.body.removeChild(textArea);
+        }
+    }
 
     // === UNDO ===
     function undoLastAction() {
@@ -563,20 +690,22 @@ function triggerConfetti() {
         closeModal,
         changeDate,
         goToToday,
-        openDatePicker,          
-        jumpToSelectedDate,     
+        openDatePicker,
+        jumpToSelectedDate,
         toggleDarkMode,
         toggleNotifications,
         saveReminderTime,
         installApp,
         dismissInstall,
         undoLastAction,
+        shareProgress,
         pushUndo: (action) => {
             undoStack.push(action);
             if (undoStack.length > 10) undoStack.shift();
         },
         init
     };
+
 })();
 
 // Initialize on DOM ready

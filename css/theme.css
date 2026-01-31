@@ -237,3 +237,25 @@
 [data-theme="dark"] #ringGradient stop:last-child {
     stop-color: #14b8a6;
 }
+
+
+/* === DARK THEME CORNER BUTTON OVERRIDES === */
+[data-theme="dark"] .corner-btn.top-left:hover {
+    background: var(--p-yellow);
+    color: var(--p-yellow-dark);
+}
+
+[data-theme="dark"] .corner-btn.top-right:hover {
+    background: var(--p-blue);
+    color: var(--p-blue-dark);
+}
+
+[data-theme="dark"] .corner-btn.bottom-left:hover {
+    background: var(--p-lavender);
+    color: var(--p-lavender-dark);
+}
+
+[data-theme="dark"] .corner-btn.bottom-right:hover {
+    background: var(--p-mint);
+    color: var(--p-mint-dark);
+}

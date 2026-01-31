@@ -15,7 +15,7 @@ body {
     background-color: var(--bg-cream);
     color: var(--text-dark);
     padding: 12px;
-    padding-bottom: 80px;
+    padding-bottom: 12px;
     max-width: 600px;
     margin: 0 auto;
     min-height: 100vh;
@@ -96,19 +96,94 @@ outline: 2px solid var(--accent-primary);
 outline-offset: 2px;
 }
 /* === SCORE CARD === */
+/* === SCORE CARD === */
 .score-card {
-background: var(--bg-card);
-border-radius: var(--radius);
-padding: 16px;
-box-shadow: var(--card-shadow);
-display: flex;
-flex-direction: column;
-align-items: center;
-margin-bottom: 12px;
-position: relative;
-overflow: hidden;
-transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: visible;
+    transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
 }
+
+/* === CORNER BUTTONS === */
+.corner-btn {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--input-bg);
+    color: var(--text-medium);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    z-index: 10;
+}
+
+.corner-btn:hover {
+    background: var(--input-hover-bg);
+    color: var(--text-dark);
+    transform: scale(1.1);
+}
+
+.corner-btn:active {
+    transform: scale(0.95);
+}
+
+.corner-btn:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+.corner-btn.top-left {
+    top: 8px;
+    left: 8px;
+}
+
+.corner-btn.top-right {
+    top: 8px;
+    right: 8px;
+}
+
+.corner-btn.bottom-left {
+    bottom: 8px;
+    left: 8px;
+}
+
+.corner-btn.bottom-right {
+    bottom: 8px;
+    right: 8px;
+}
+
+/* Hover colors for specific buttons */
+.corner-btn.top-left:hover {
+    background: var(--p-yellow);
+    color: var(--p-yellow-dark);
+}
+
+.corner-btn.top-right:hover {
+    background: var(--p-blue);
+    color: var(--p-blue-dark);
+}
+
+.corner-btn.bottom-left:hover {
+    background: var(--p-lavender);
+    color: var(--p-lavender-dark);
+}
+
+.corner-btn.bottom-right:hover {
+    background: var(--p-mint);
+    color: var(--p-mint-dark);
+}
+
 .score-ring-container {
 width: 90px;
 height: 90px;
@@ -580,60 +655,6 @@ color: var(--text-light);
 margin-bottom: 16px;
 font-size: 13px;
 }
-/* === FOOTER === */
-.app-footer {
-position: fixed;
-bottom: 0;
-left: 0;
-right: 0;
-background: var(--footer-bg);
-padding: 8px 16px;
-padding-bottom: max(8px, env(safe-area-inset-bottom));
-border-top: 1px solid var(--border-light);
-display: flex;
-justify-content: center;
-gap: 32px;
-z-index: 50;
-transition: background-color var(--transition-normal), border-color var(--transition-normal);
-}
-@supports (backdrop-filter: blur(10px)) {
-.app-footer {
-backdrop-filter: blur(10px);
-}
-}
-.footer-btn {
-background: none;
-border: none;
-font-weight: 600;
-color: var(--text-light);
-font-size: 10px;
-cursor: pointer;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 2px;
-transition: color var(--transition-fast), transform var(--transition-fast);
-padding: 6px;
-}
-.footer-btn:hover {
-color: var(--text-dark);
-}
-.footer-btn:active {
-transform: scale(0.95);
-}
-.footer-btn:focus-visible {
-outline: 2px solid var(--accent-primary);
-outline-offset: 2px;
-border-radius: 8px;
-}
-.footer-btn svg {
-width: 20px;
-height: 20px;
-transition: transform var(--transition-fast);
-}
-.footer-btn:hover svg {
-transform: scale(1.1);
-}
 /* === BUTTONS === */
 .btn-primary {
 width: 100%;
@@ -981,62 +1002,72 @@ font-family: inherit;
 background: var(--bg-card);
 color: var(--text-dark);
 }
-/* === RESPONSIVE === */
+
+
 @media (max-width: 400px) {
-body {
-padding: 10px;
-padding-bottom: 70px;
-}
-.score-ring-container {
-    width: 80px;
-    height: 80px;
+    body {
+        padding: 10px;
+        padding-bottom: 16px;
+    }
+
+    .score-ring-container {
+        width: 80px;
+        height: 80px;
+    }
+
+    #dailyScore {
+        font-size: 22px;
+    }
+
+    .habit-card {
+        padding: 10px;
+    }
+
+    .date-display h1 {
+        font-size: 18px;
+    }
+
+    .nav-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .counter-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .counter-value {
+        font-size: 24px;
+    }
+
+    .timer-value {
+        font-size: 28px;
+    }
+
+    .timer-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .timer-btn.play,
+    .timer-btn.pause {
+        width: 48px;
+        height: 48px;
+    }
+
+    .corner-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .corner-btn svg {
+        width: 14px;
+        height: 14px;
+    }
 }
 
-#dailyScore {
-    font-size: 22px;
-}
 
-.habit-card {
-    padding: 10px;
-}
-
-.app-footer {
-    gap: 20px;
-}
-
-.date-display h1 {
-    font-size: 18px;
-}
-
-.nav-btn {
-    width: 34px;
-    height: 34px;
-}
-
-.counter-btn {
-    width: 36px;
-    height: 36px;
-}
-
-.counter-value {
-    font-size: 24px;
-}
-
-.timer-value {
-    font-size: 28px;
-}
-
-.timer-btn {
-    width: 40px;
-    height: 40px;
-}
-
-.timer-btn.play,
-.timer-btn.pause {
-    width: 48px;
-    height: 48px;
-}
-}
 /* === REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {
 *,
