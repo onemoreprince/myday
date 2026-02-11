@@ -325,7 +325,7 @@ const App = (function () {
         }
     }
 
-    // === TOAST ===
+// === TOAST ===
     function showToast(msg = 'Saved!', showUndo = false) {
         const toast = document.getElementById('toast');
         const toastMsg = document.getElementById('toastMessage');
@@ -339,7 +339,7 @@ const App = (function () {
         clearTimeout(window.toastTimeout);
         window.toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
-        }, showUndo ? 5000 : 2000);
+        }, showUndo ? 1000 : 1000); 
     }
 
 

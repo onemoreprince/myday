@@ -403,7 +403,34 @@
             </div>
         </div>
     </div>
+<div id="helpModal" class="modal" role="dialog" aria-labelledby="helpTitle">
+        <div class="modal-backdrop" onclick="App.closeModal('helpModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="helpTitle">How to use MyDay</h2>
+                <button class="close-btn" onclick="App.closeModal('helpModal')">×</button>
+            </div>
+            <div class="modal-section" style="border:none;">
+                <p style="margin-bottom:15px; line-height:1.5; color:var(--text-medium);">
+                    <strong>1. Create Habits:</strong> Tap the bottom-left button to create habits. Choose from Checkbox, Timer, Counter, or Stars.
+                </p>
+                <p style="margin-bottom:15px; line-height:1.5; color:var(--text-medium);">
+                    <strong>2. Track Daily:</strong> Tap items to mark them complete. Use the top arrows or date to navigate to past days.
+                </p>
+                <p style="margin-bottom:15px; line-height:1.5; color:var(--text-medium);">
+                    <strong>3. Earn Points:</strong> Fill your daily ring! 100% completion triggers a celebration.
+                </p>
+                <p style="margin-bottom:15px; line-height:1.5; color:var(--text-medium);">
+                    <strong>4. Offline:</strong> This app works fully offline. You can install it to your home screen.
+                </p>
+            </div>
+        </div>
+    </div>
 
+    <footer class="app-footer">
+        <a class="footer-link" onclick="App.openModal('helpModal')">How to use</a>
+        <a class="footer-link" href="mailto:hello@onemoreprince.com?subject=MyDay%20App%20Feedback">Contact</a>
+    </footer>
     <!-- JavaScript Files -->
     <script src="js/app.js"></script>
     <script src="js/habits.js"></script>

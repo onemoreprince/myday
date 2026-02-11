@@ -224,7 +224,8 @@ const Habits = (function () {
         }
     }
 
-    // === RENDER DAY ===
+
+// === RENDER DAY ===
     function renderDay() {
         const currentDate = App.currentDate();
         const dateStr = App.getDateStr(currentDate);
@@ -234,13 +235,34 @@ const Habits = (function () {
         const data = App.getStorage(App.DB_KEYS.DATA, {});
         const daysData = data[dateStr] || {};
 
-        // Update Header
+        // === CHANGED: Header Logic ===
         const isToday = todayStr === dateStr;
-        const isFuture = currentDate > new Date();
+        const isFuture = dateStr > todayStr;
+        const isPast = dateStr < todayStr;
 
-        document.getElementById('dayName').textContent = isToday ? 'Today' :
-            (isFuture ? 'Future' : 'Past');
-        document.getElementById('fullDate').textContent = App.getPrettyDate(currentDate);
+        // Big Date (e.g., "11")
+        const dayNumber = currentDate.getDate();
+        // Day Name (e.g., "Wednesday")
+        const dayName = currentDate.toLocaleDateString('en-US', { weekday: 'long' });
+        // Full Month Year (e.g., "Feb 2026")
+        const monthYear = currentDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+        let headerTitle = `${dayName}`;
+        let headerSub = `${dayNumber} ${monthYear}`;
+
+        // Add dots based on state
+        if (isPast) {
+            headerTitle = `🟡 ${headerTitle}`; // Yellow dot left
+        } else if (isFuture) {
+            headerTitle = `${headerTitle} 🔴`; // Red dot right
+        } else {
+            // Optional: You can keep it clean for Today, or add a green dot
+             headerTitle = `🌱 ${headerTitle}`; 
+        }
+
+        document.getElementById('dayName').textContent = headerTitle;
+        document.getElementById('fullDate').textContent = headerSub;
+        // =============================
 
         // Check empty state
         if (activeHabits.length === 0) {
