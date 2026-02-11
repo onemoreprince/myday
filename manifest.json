@@ -6,7 +6,11 @@
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
-    "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+    "display_override": [
+        "window-controls-overlay",
+        "standalone",
+        "minimal-ui"
+    ],
     "background_color": "#0D0D14",
     "theme_color": "#7bd4cc",
     "orientation": "portrait",
@@ -15,13 +19,13 @@
             "src": "./icons/icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any maskable"
         },
         {
             "src": "./icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any maskable"
         }
     ],
     "screenshots": [
@@ -40,7 +44,11 @@
             "label": "Your habit dashboard"
         }
     ],
-    "categories": ["lifestyle", "productivity", "health"],
+    "categories": [
+        "lifestyle",
+        "productivity",
+        "health"
+    ],
     "shortcuts": [
         {
             "name": "Add Habit",
@@ -49,8 +57,8 @@
             "url": "./?action=add",
             "icons": [
                 {
-                    "src": "./icons/icon-96.png",
-                    "sizes": "96x96",
+                    "src": "./icons/icon-192.png",
+                    "sizes": "192x192",
                     "type": "image/png"
                 }
             ]
@@ -62,8 +70,8 @@
             "url": "./?action=reports",
             "icons": [
                 {
-                    "src": "./icons/icon-96.png",
-                    "sizes": "96x96",
+                    "src": "./icons/icon-192.png",
+                    "sizes": "192x192",
                     "type": "image/png"
                 }
             ]
